@@ -140,7 +140,7 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
 
         var value = valuePath.ReadFromJsonFile(type);
 
-        return value != null ? Builder.Services.AddKeyedSingleton(type, value, key) : Builder.Services;
+        return value != null ? Builder.Services.AddKeyedSingleton(type, key, value) : Builder.Services;
     }
 
     protected IServiceCollection AddServiceValueByInterface(string assemblyPath, string valuePath, Type interfaceType)
