@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DependencyInjection.ImplementationFactory\DependencyInjection.ImplementationFactory.csproj" />
-    <ProjectReference Include="..\DependencyInjectionExtensions\DependencyInjection.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
