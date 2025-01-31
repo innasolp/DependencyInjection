@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set diLibDir=$(ProjectDir)\..\..\Libs\DependencyInjection\ImplementationFactory&#xD;&#xA;if not exist %25diLibDir%25 mkdir %25diLibDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25diLibDir%25&quot;" />
+    <Exec Command="set diLibDir=$(ProjectDir)\..\..\Libs\DependencyInjection\ImplementationFactory&#xD;&#xA;set currentDiLibDir=$(SolutionDir)\Libs\DependencyInjection\ImplementationFactory&#xD;&#xA;if not exist %25diLibDir%25 mkdir %25diLibDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25diLibDir%25&quot;&#xD;&#xA;if not exist %25currentDiLibDir%25 mkdir %25currentDiLibDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25currentDiLibDir%25&quot;" />
   </Target>
 
 </Project>
