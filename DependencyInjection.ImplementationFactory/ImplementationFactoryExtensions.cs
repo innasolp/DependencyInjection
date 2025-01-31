@@ -26,7 +26,7 @@ public static class ImplementationFactoryExtensions
         });
     }
 
-    public static IServiceCollection AddServiceImplementationTransient(this IServiceCollection services, Type serviceType, Type serviceImplementationFactoryType, object? key)
+    public static IServiceCollection AddServiceImplementationTransientByKey(this IServiceCollection services, Type serviceType, Type serviceImplementationFactoryType, object? key)
     {
         services.AddTransient(serviceImplementationFactoryType);
 
@@ -62,7 +62,7 @@ public static class ImplementationFactoryExtensions
         });
     }
 
-    public static IServiceCollection AddServiceImplementationSingleton(this IServiceCollection services, Type serviceType, Type serviceImplementationFactoryType, object? key)
+    public static IServiceCollection AddServiceImplementationSingletonByKey(this IServiceCollection services, Type serviceType, Type serviceImplementationFactoryType, object? implementationKey)
     {
         services.AddTransient(serviceImplementationFactoryType);
 
@@ -70,7 +70,7 @@ public static class ImplementationFactoryExtensions
         {
             var serviceImplementation = serviceProvider.GetIfAvailable(serviceImplementationFactoryType);
 
-            return serviceImplementation.GetService(serviceProvider, serviceType, key);
+            return serviceImplementation.GetService(serviceProvider, serviceType, implementationKey);
         });
     }
 

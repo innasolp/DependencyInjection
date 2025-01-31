@@ -90,7 +90,21 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
         return implementationType;
     }
 
-    protected IServiceCollection AddService(string assemblyPath, Type interfaceType, object? key, out Type? serviceType)
+    protected IServiceCollection AddService(string assemblyPath, Type interfaceType,  out Type? serviceType)
+    {
+        Assembly assembly = LoadAssembly(assemblyPath);
+
+        var serviceKey = new KeyValuePair<Assembly, Type>(assembly, interfaceType);
+        
+        if (!AssemblyInterfaceTypes.TryGetValue(serviceKey, out serviceType))        
+            serviceType = LoadServiceTypeByInterface(assembly, interfaceType);        
+
+        return serviceType != null ?
+             Builder.Services.AddSingleton(interfaceType, serviceType)
+            : Builder.Services;
+    }
+    
+    protected IServiceCollection AddKeyedService(string assemblyPath, Type interfaceType, object? key, out Type? serviceType)
     {
         Assembly assembly = LoadAssembly(assemblyPath);
 
@@ -101,20 +115,28 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
         
 
         return serviceType != null ?
-            (key != null ? Builder.Services.AddKeyedSingleton(interfaceType, key, serviceType)
-                          : Builder.Services.AddSingleton(interfaceType, serviceType))
+            Builder.Services.AddKeyedSingleton(interfaceType, key, serviceType)
             : Builder.Services;
     }
 
-    protected IServiceCollection AddServiceByImplementationFactory(string serviceProviderPath,Type serviceInterfaceType, object? key)
+    protected IServiceCollection AddServiceByImplementationFactory(string serviceProviderPath,Type serviceInterfaceType)
     {
-        AddService(serviceProviderPath, typeof(IServiceImplementationFactory), key, out Type? serviceProviderType);
+        AddService(serviceProviderPath, typeof(IServiceImplementationFactory),out Type? serviceProviderType);
 
         if (serviceProviderType == null)
             return Builder.Services;
 
-        return key != null ? Builder.Services.AddServiceImplementationSingleton(serviceInterfaceType, serviceProviderType, key)
-                            : Builder.Services.AddServiceImplementationSingleton(serviceInterfaceType, serviceProviderType);
+        return Builder.Services.AddServiceImplementationSingleton(serviceInterfaceType, serviceProviderType);
+    }
+    
+    protected IServiceCollection AddServiceByKeyedImplementationFactory(string serviceProviderPath,Type serviceInterfaceType, object? key)
+    {
+        AddKeyedService(serviceProviderPath, typeof(IServiceImplementationFactory), key, out Type? serviceProviderType);
+
+        if (serviceProviderType == null)
+            return Builder.Services;
+
+        return Builder.Services.AddServiceImplementationSingletonByKey(serviceInterfaceType, serviceProviderType, key);
     }
 
     protected IServiceCollection AddServiceValue(string assemblyPath, string valuePath, Func<Assembly, Type?> getType)
