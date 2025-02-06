@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <Configurations>Debug;Release;debug libs</Configurations>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set diLibDir=$(ProjectDir)\..\..\Libs\DependencyInjection&#xD;&#xA;set currentDir=$(SolutionDir)\Libs\DependencyInjection&#xD;&#xA;if not exist %25diLibDir%25 mkdir %25diLibDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25diLibDir%25&quot;&#xD;&#xA;if not exist %25currentDir%25 mkdir %25currentDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25currentDir%25&quot;" />
+  </Target>
+
+</Project>
