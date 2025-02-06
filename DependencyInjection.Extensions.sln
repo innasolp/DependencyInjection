@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.Impleme
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.WorkerBuilder", "WorkerBuilder\DependencyInjection.WorkerBuilder.csproj", "{E01AF03E-F709-43F0-95E1-F1B9B06D350E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.Interfaces", "DependencyInjection.Interfaces\DependencyInjection.Interfaces.csproj", "{FCCB2857-3C4F-424C-B6E8-C1E1A1B61228}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{E01AF03E-F709-43F0-95E1-F1B9B06D350E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E01AF03E-F709-43F0-95E1-F1B9B06D350E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E01AF03E-F709-43F0-95E1-F1B9B06D350E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCCB2857-3C4F-424C-B6E8-C1E1A1B61228}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCCB2857-3C4F-424C-B6E8-C1E1A1B61228}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCCB2857-3C4F-424C-B6E8-C1E1A1B61228}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCCB2857-3C4F-424C-B6E8-C1E1A1B61228}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
