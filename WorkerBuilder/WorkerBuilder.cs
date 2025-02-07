@@ -89,14 +89,14 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
             : Builder.Services;
     }
 
-    protected IServiceCollection AddServiceByImplementationFactory(Type serviceInterfaceType, string serviceProviderPath)
+    protected IServiceCollection AddServiceByImplementationFactory(Type serviceType, string serviceProviderPath)
     {
-        AddService(typeof(IServiceImplementationFactory), serviceProviderPath, out Type? serviceProviderType);
+        var serviceImplementationFactoryType = LoadServiceFromPath(serviceProviderPath, typeof(IServiceImplementationFactory));
 
-        if (serviceProviderType == null)
+        if (serviceImplementationFactoryType == null)
             return Builder.Services;
 
-        return Builder.Services.AddServiceImplementationSingleton(serviceInterfaceType, serviceProviderType);
+        return Builder.Services.AddServiceImplementationSingleton(serviceType, serviceImplementationFactoryType);
     }
 
     protected IServiceCollection AddServiceByImplementationFactory(string serviceTypeName, string serviceProviderPath, string assemblyPath)
@@ -104,21 +104,36 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
         return AddServiceByImplementationFactory(assemblyPath.GetInterfaceTypeFromAssembly(serviceTypeName), serviceProviderPath);
     }
 
-    protected IServiceCollection AddServiceByKeyedImplementationFactory(Type serviceInterfaceType, string serviceProviderPath, object? key)
+    protected IServiceCollection AddServiceByKeyedImplementationFactory(Type serviceType, string serviceProviderPath, object? key)
     {
-        AddKeyedService(typeof(IServiceImplementationFactory), serviceProviderPath, key, out Type? serviceProviderType);
-
-        if (serviceProviderType == null)
+        var serviceImplementationFactoryType = LoadServiceFromPath(serviceProviderPath, typeof(IServiceImplementationFactory));
+        
+        if (serviceImplementationFactoryType == null)
             return Builder.Services;
 
-        return Builder.Services.AddServiceImplementationSingletonByKey(serviceInterfaceType, serviceProviderType, key);
+        return Builder.Services.AddServiceImplementationSingletonByKey(serviceType, serviceImplementationFactoryType, key);
+    }
+
+    protected IServiceCollection AddKeyedServiceByImplementationFactory(string serviceTypeName, string serviceProviderPath, string assemblyPath, object? key)
+    {
+        return AddKeyedServiceByImplementationFactory(assemblyPath.GetInterfaceTypeFromAssembly(serviceTypeName), serviceProviderPath, key);
+    }
+
+    protected IServiceCollection AddKeyedServiceByImplementationFactory(Type serviceType, string serviceProviderPath, object? key)
+    {
+        var serviceImplementationFactoryType = LoadServiceFromPath(serviceProviderPath, typeof(IServiceImplementationFactory));
+
+        if (serviceImplementationFactoryType == null)
+            return Builder.Services;
+
+        return Builder.Services.AddKeyedServiceImplementationSingleton(serviceType, serviceImplementationFactoryType, key);
     }
 
     protected IServiceCollection AddServiceByKeyedImplementationFactory(string serviceTypeName, string serviceProviderPath, string assemblyPath, object? key)
     {
         return AddServiceByKeyedImplementationFactory(assemblyPath.GetInterfaceTypeFromAssembly(serviceTypeName), serviceProviderPath, key);
     }
-    
+
     protected IServiceCollection AddServiceValueFromJson(Type serviceType, string assemblyPath, string json)
     {
         var implementationType = LoadServiceFromPath(assemblyPath, serviceType);
@@ -182,7 +197,7 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
     {
         if (!string.IsNullOrEmpty(serviceSettings.ServiceProviderPath))
         {
-            return AddServiceByKeyedImplementationFactory(serviceType, serviceSettings.ServiceProviderPath, key);
+            return AddKeyedServiceByImplementationFactory(serviceType, serviceSettings.ServiceProviderPath, key);
         }
         else if (serviceSettings.Value != null && !string.IsNullOrEmpty(serviceSettings.AssemblyPath))
         {
@@ -217,7 +232,7 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
 
         if (!string.IsNullOrEmpty(serviceSettings.ServiceProviderPath))
         {
-            return AddServiceByKeyedImplementationFactory(serviceSettings.ServiceTypeName, serviceSettings.ServiceProviderPath, assemblyPath, key);
+            return AddKeyedServiceByImplementationFactory(serviceSettings.ServiceTypeName, serviceSettings.ServiceProviderPath, assemblyPath, key);
         }
         else if (serviceSettings.Value != null && !string.IsNullOrEmpty(serviceSettings.AssemblyPath))
         {
