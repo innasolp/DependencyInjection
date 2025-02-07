@@ -2,7 +2,6 @@
 using DependencyInjection.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Reflection;
 using System.Text.Json;
 
 namespace DependencyInjection.WorkerBuilder;
@@ -10,69 +9,9 @@ namespace DependencyInjection.WorkerBuilder;
 public abstract class WorkerBuilder(IHostApplicationBuilder builder)
 {
     protected IHostApplicationBuilder Builder { get; } = builder;
-
-    protected Dictionary<string, Assembly> ServiceAssemblies { get; } = [];
-
-    protected Dictionary<KeyValuePair<Assembly, Type>, Type> AssemblyInterfaceTypes { get; } = [];
-
-    protected Dictionary<KeyValuePair<Assembly, string>, Type> AssemblyNameTypes { get; } = [];
-
     protected Dictionary<KeyValuePair<string, Type>, Type[]> PathInterfaceTypes { get; } = [];
 
-    protected Dictionary<KeyValuePair<string, string>, Type> PathServiceTypeNameTypes { get; } = [];
-
-    protected Dictionary<string, IHttpClientBuilder> HttpClientBuilders { get; } = [];
-
-    protected Assembly LoadAssembly(string assemblyPath)
-    {
-        Assembly assembly;
-        if (!ServiceAssemblies.TryGetValue(assemblyPath, out Assembly? value))
-        {
-            assembly = Assembly.LoadFrom(assemblyPath);
-            ServiceAssemblies.Add(assemblyPath, assembly);
-        }
-        else
-            assembly = value;
-
-        return assembly;
-    }
-    protected Type? LoadServiceFromAssembly(Assembly assembly, Type serviceType)
-    {
-        Type? implementationType;
-
-        var assemlyInterfaceType = new KeyValuePair<Assembly, Type>(assembly, serviceType);
-
-        if (!AssemblyInterfaceTypes.TryGetValue(assemlyInterfaceType, out Type? value))
-        {
-            var types = assembly.GetTypes();
-            implementationType = types.FirstOrDefault(t => t.GetInterfaces().Contains(serviceType));
-            if (implementationType != null)
-                AssemblyInterfaceTypes.Add(assemlyInterfaceType, implementationType);
-        }
-        else
-            implementationType = value;
-
-        return implementationType;
-    }
-
-    protected Type? LoadServiceFromAssembly(Assembly assembly, string typeName)
-    {
-        Type? serviceType;
-
-        var key = new KeyValuePair<Assembly, string>(assembly, typeName);
-
-        if (!AssemblyNameTypes.TryGetValue(key, out Type? type))
-        {
-            var types = assembly.GetTypes();
-            serviceType = types.FirstOrDefault(t => t.IsClass && !t.IsAbstract && t.Name.Contains(typeName));
-            if (serviceType != null)
-                AssemblyNameTypes.Add(key, serviceType);
-        }
-        else
-            serviceType = type;
-
-        return serviceType;
-    }
+    protected Dictionary<KeyValuePair<string, string>, Type> PathServiceTypeNameTypes { get; } = [];    
 
     protected Type? LoadServiceFromPath(string path, Type serviceType)
     {
@@ -99,7 +38,7 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
 
         if (!PathServiceTypeNameTypes.TryGetValue(key, out Type? implementationType))
         {
-            implementationType = serviceTypeName.GetServiceTypeFromAssembly(path);
+            implementationType = path.GetServiceTypeFromAssembly(serviceTypeName);
 
             if (implementationType != null)
                 PathServiceTypeNameTypes.Add(key, implementationType);
@@ -108,64 +47,45 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
         return implementationType;
     }
 
-    protected IServiceCollection AddService(Type interfaceType, string assemblyPath, out Type? serviceType)
+    protected IServiceCollection AddService(Type serviceType, string assemblyPath, out Type? implementationType)
     {
-        Assembly assembly = LoadAssembly(assemblyPath);
+        implementationType = LoadServiceFromPath(assemblyPath, serviceType);
 
-        var serviceKey = new KeyValuePair<Assembly, Type>(assembly, interfaceType);
-
-        if (!AssemblyInterfaceTypes.TryGetValue(serviceKey, out serviceType))
-            serviceType = LoadServiceFromAssembly(assembly, interfaceType);
-
-        return serviceType != null ?
-             Builder.Services.AddSingleton(interfaceType, serviceType)
+        return implementationType != null ?
+             Builder.Services.AddSingleton(serviceType, implementationType)
             : Builder.Services;
     }
 
     protected IServiceCollection AddService(string serviceTypeName, string assemblyPath, out Type? implementationType)
     {
-        Assembly assembly = LoadAssembly(assemblyPath);
+        implementationType = LoadServiceFromPath(assemblyPath, serviceTypeName);
 
-        var interfaceType = assembly.GetInterfaceType(serviceTypeName);
+        var serviceType = implementationType?.GetInterfaces().FirstOrDefault(i=>i.Name == serviceTypeName)
+            ?? implementationType?.GetInterfaces().FirstOrDefault(i => i.Name.Contains(serviceTypeName));
 
-        var serviceKey = new KeyValuePair<Assembly, Type>(assembly, interfaceType);
-
-        if (!AssemblyInterfaceTypes.TryGetValue(serviceKey, out implementationType))
-            implementationType = LoadServiceFromAssembly(assembly, serviceTypeName);
-
-        return implementationType != null ?
-             Builder.Services.AddSingleton(interfaceType, implementationType)
+        return implementationType != null && serviceType != null ?
+             Builder.Services.AddSingleton(serviceType, implementationType)
             : Builder.Services;
     }
 
-    protected IServiceCollection AddKeyedService(Type interfaceType, string assemblyPath, object? key, out Type? serviceType)
+    protected IServiceCollection AddKeyedService(Type serviceType, string assemblyPath, object? key, out Type? implementationType)
     {
-        Assembly assembly = LoadAssembly(assemblyPath);
+        implementationType = LoadServiceFromPath(assemblyPath, serviceType);
 
-        var serviceKey = new KeyValuePair<Assembly, Type>(assembly, interfaceType);
-
-        if (!AssemblyInterfaceTypes.TryGetValue(serviceKey, out serviceType))
-            serviceType = LoadServiceFromAssembly(assembly, interfaceType);
-
-
-        return serviceType != null ?
-            Builder.Services.AddKeyedSingleton(interfaceType, key, serviceType)
+        return implementationType != null ?
+            Builder.Services.AddKeyedSingleton(serviceType, key, implementationType)
             : Builder.Services;
     }
 
     protected IServiceCollection AddKeyedService(string serviceTypeName, string assemblyPath, object? key, out Type? implementationType)
     {
-        Assembly assembly = LoadAssembly(assemblyPath);
+        implementationType = LoadServiceFromPath(assemblyPath, serviceTypeName);
 
-        var interfaceType = assembly.GetInterfaceType(serviceTypeName);
+        var serviceType = implementationType?.GetInterfaces().FirstOrDefault(i => i.Name == serviceTypeName)
+            ?? implementationType?.GetInterfaces().FirstOrDefault(i => i.Name.Contains(serviceTypeName));
 
-        var serviceKey = new KeyValuePair<Assembly, Type>(assembly, interfaceType);
-
-        if (!AssemblyInterfaceTypes.TryGetValue(serviceKey, out implementationType))
-            implementationType = LoadServiceFromAssembly(assembly, serviceTypeName);
-
-        return implementationType != null ?
-             Builder.Services.AddKeyedSingleton(interfaceType, implementationType, key)
+        return implementationType != null && serviceType != null ?
+             Builder.Services.AddKeyedSingleton(serviceType, implementationType, key)
             : Builder.Services;
     }
 
@@ -181,7 +101,7 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
 
     protected IServiceCollection AddServiceByImplementationFactory(string serviceTypeName, string serviceProviderPath, string assemblyPath)
     {
-        return AddServiceByImplementationFactory(serviceTypeName.GetInterfaceTypeFromAssembly(assemblyPath), serviceProviderPath);
+        return AddServiceByImplementationFactory(assemblyPath.GetInterfaceTypeFromAssembly(serviceTypeName), serviceProviderPath);
     }
 
     protected IServiceCollection AddServiceByKeyedImplementationFactory(Type serviceInterfaceType, string serviceProviderPath, object? key)
@@ -196,64 +116,52 @@ public abstract class WorkerBuilder(IHostApplicationBuilder builder)
 
     protected IServiceCollection AddServiceByKeyedImplementationFactory(string serviceTypeName, string serviceProviderPath, string assemblyPath, object? key)
     {
-        return AddServiceByKeyedImplementationFactory(serviceTypeName.GetInterfaceTypeFromAssembly(assemblyPath), serviceProviderPath, key);
+        return AddServiceByKeyedImplementationFactory(assemblyPath.GetInterfaceTypeFromAssembly(serviceTypeName), serviceProviderPath, key);
     }
-
-    protected IServiceCollection AddServiceValueFromJson(string assemblyPath, string json, Func<Assembly, Type?> getType)
-    {
-        var assembly = LoadAssembly(assemblyPath);
-
-        var implementationType = getType(assembly);
-
-        if (implementationType == null) return Builder.Services;
-
-        var value = JsonSerializer.Deserialize(json, implementationType);
-
-        return value != null ? Builder.Services.AddSingleton(implementationType, value) : Builder.Services;
-    }
-
+    
     protected IServiceCollection AddServiceValueFromJson(Type serviceType, string assemblyPath, string json)
     {
-        return AddServiceValueFromJson(assemblyPath, json, (assembly) => LoadServiceFromAssembly(assembly, serviceType));
+        var implementationType = LoadServiceFromPath(assemblyPath, serviceType);
+
+        var value = JsonSerializer.Deserialize(json, implementationType ?? serviceType);
+
+        return value != null ? Builder.Services.AddSingleton(serviceType, value) : Builder.Services;
     }
 
     protected IServiceCollection AddServiceValueFromJson(string serviceTypeName, string assemblyPath, string json)
     {
         var implementationType = LoadServiceFromPath(assemblyPath, serviceTypeName);
 
-        if (implementationType == null) return Builder.Services;
+        var serviceType = implementationType?.GetInterfaces().FirstOrDefault(i => i.Name == serviceTypeName)
+            ?? implementationType?.GetInterfaces().FirstOrDefault(i => i.Name.Contains(serviceTypeName));
 
-        var value = JsonSerializer.Deserialize(json, implementationType);
+        var value = implementationType != null ? JsonSerializer.Deserialize(json, implementationType) : null;
 
-        return value != null ? Builder.Services.AddSingleton(implementationType, value) : Builder.Services;
+        return value != null ? Builder.Services.AddSingleton(serviceType ?? implementationType, value) : Builder.Services;
     }
 
-    protected IServiceCollection AddKeyedServiceValueFromJson(Func<Assembly, Type?> getType, string assemblyPath, string json, object? key)
-    {
-        var assembly = LoadAssembly(assemblyPath);
-
-        var implementationType = getType(assembly);
-
-        if (implementationType == null) return Builder.Services;
-
-        var value = JsonSerializer.Deserialize(json, implementationType);
-
-        return value != null ? Builder.Services.AddKeyedSingleton(implementationType, key, value) : Builder.Services;
-    }
+    
     protected IServiceCollection AddKeyedServiceValueFromJson(string serviceTypeName, string assemblyPath, string json, object? key)
     {
         var implementationType = LoadServiceFromPath(assemblyPath, serviceTypeName);
 
         if (implementationType == null) return Builder.Services;
 
+        var serviceType = implementationType?.GetInterfaces().FirstOrDefault(i => i.Name == serviceTypeName)
+            ?? implementationType?.GetInterfaces().FirstOrDefault(i => i.Name.Contains(serviceTypeName));
+
         var value = JsonSerializer.Deserialize(json, implementationType);
 
-        return value != null ? Builder.Services.AddKeyedSingleton(implementationType, key, value) : Builder.Services;
+        return value != null ? Builder.Services.AddKeyedSingleton(serviceType ?? implementationType, key, value) : Builder.Services;
     }
 
     protected IServiceCollection AddKeyedServiceValueFromJson(Type serviceType, string assemblyPath, string json, object? key)
     {
-        return AddKeyedServiceValueFromJson((assembly) => LoadServiceFromAssembly(assembly, serviceType), assemblyPath, json, key);
+        var implementationType = LoadServiceFromPath(assemblyPath, serviceType);
+
+        var value = JsonSerializer.Deserialize(json, implementationType ?? serviceType);
+
+        return value != null ? Builder.Services.AddKeyedSingleton(serviceType, key, value) : Builder.Services;
     }
 
     protected virtual IServiceCollection AddServiceBySettings(Type serviceType, IServiceSettings serviceSettings, object? implementationKey)
