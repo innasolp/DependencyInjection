@@ -12,5 +12,5 @@ public interface IServiceSettings
 
     string? ServiceProviderPath { get; set; }
 
-    JsonObject? Value { get; set; }
+    string? Value { get; set; }
 }
