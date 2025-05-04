@@ -6,6 +6,9 @@
     <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Configurations>Debug;Release;debug libs</Configurations>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Dependency Injection for serviceprovider factory</Title>
+    <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
