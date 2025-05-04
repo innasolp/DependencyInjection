@@ -9,6 +9,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Dependency injection interception extensions</Title>
     <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
+    <RepositoryUrl>https://github.com/innasolp/DependencyInjection</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
