@@ -10,6 +10,7 @@
     <PackageId>$(AssemblyName)</PackageId>
     <Title>Dependency injection interfaces</Title>
     <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
+    <RepositoryUrl>https://github.com/innasolp/DependencyInjection</RepositoryUrl>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

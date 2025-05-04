@@ -8,7 +8,11 @@
     <Configurations>Debug;Release;debug libs</Configurations>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Dependency Injection for serviceprovider factory</Title>
-    <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
+    <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>  
+    <PackageId>$(AssemblyName)</PackageId>
+    <Version>$(VersionPrefix)</Version>
+    <Authors>innasolp</Authors>
+    <RepositoryUrl>https://github.com/innasolp/DependencyInjection</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
