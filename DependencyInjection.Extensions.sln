@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.Interception", "DependencyInjection.Interception\DependencyInjection.Interception.csproj", "{4BD711BC-9D8B-415F-9C2F-155533F94FD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.InterceptionExtensions", "DependencyInjection.InterceptionExtensions\DependencyInjection.InterceptionExtensions.csproj", "{4BD711BC-9D8B-415F-9C2F-155533F94FD0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.ImplementationFactory", "DependencyInjection.ImplementationFactory\DependencyInjection.ImplementationFactory.csproj", "{152DA277-8994-4E80-8B0C-B230C30DDB07}"
 EndProject
