@@ -6,6 +6,9 @@
     <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Configurations>Debug;Release;debug libs</Configurations>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
+    <Title>Build dependencies by settings</Title>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DependencyInjection.ImplementationFactory\DependencyInjection.ImplementationFactory.csproj" />
-    <ProjectReference Include="..\DependencyInjection.Interfaces\DependencyInjection.Interfaces.csproj" />
+    <ProjectReference Include="..\DependencyInjection.Settings\DependencyInjection.Settings.csproj" />
   </ItemGroup>
 
   <ItemGroup>
