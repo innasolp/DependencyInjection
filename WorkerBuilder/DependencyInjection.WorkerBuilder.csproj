@@ -21,12 +21,6 @@
     <ProjectReference Include="..\DependencyInjection.Settings\DependencyInjection.Settings.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Json.Extensions">
-      <HintPath>..\..\Libs\Json\Json.Extensions\Json.Extensions.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="set diLibDir=$(ProjectDir)\..\..\Libs\DependencyInjection\WorkerBuilder&#xD;&#xA;set currentDir=$(SolutionDir)\Libs\DependencyInjection\WorkerBuilder&#xD;&#xA;if not exist %25diLibDir%25 mkdir %25diLibDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25diLibDir%25&quot;&#xD;&#xA;if not exist %25currentDir%25 mkdir %25currentDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25currentDir%25&quot;" />
   </Target>
