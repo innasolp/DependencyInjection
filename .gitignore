@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Libs/DependencyInjection
 /public_packages.bat
+/DependencyInjection.InterceptionExtensions/nuget.exe
