@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.AssemblyExtensions", "DependencyInjections.AssemblyExtensions\DependencyInjection.AssemblyExtensions.csproj", "{B0053CB5-2E11-43B4-AC78-1CAB4B62CAD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{FCCB2857-3C4F-424C-B6E8-C1E1A1B61228}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCCB2857-3C4F-424C-B6E8-C1E1A1B61228}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCCB2857-3C4F-424C-B6E8-C1E1A1B61228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0053CB5-2E11-43B4-AC78-1CAB4B62CAD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0053CB5-2E11-43B4-AC78-1CAB4B62CAD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0053CB5-2E11-43B4-AC78-1CAB4B62CAD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0053CB5-2E11-43B4-AC78-1CAB4B62CAD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

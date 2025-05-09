@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace DependencyInjection.WorkerBuilder;
+namespace DependencyInjection.AssemblyExtensions;
 
 public static class TypeExtensions
 {
@@ -14,8 +14,8 @@ public static class TypeExtensions
         List<Assembly> assemblies = [];
 
         if (assembliesDir.Length != 0)
-            assemblies = assembliesDir.SelectMany(d => Directory.GetFiles(d, "*.dll")).Select(Assembly.LoadFrom).ToList();        
-        
+            assemblies = assembliesDir.SelectMany(d => Directory.GetFiles(d, "*.dll")).Select(Assembly.LoadFrom).ToList();
+
         assemblies.AddRange(Directory.GetFiles(path, "*.dll").Select(Assembly.LoadFrom).ToList());
 
         return assemblies;
