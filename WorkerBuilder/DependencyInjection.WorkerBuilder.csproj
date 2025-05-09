@@ -6,10 +6,12 @@
     <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Configurations>Debug;Release;debug libs</Configurations>
+    <Version>1.0.0.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
     <Title>Build dependencies by settings</Title>
     <RepositoryUrl>https://github.com/innasolp/DependencyInjection</RepositoryUrl>
+    <PackageVersion>$(Version)</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DependencyInjection.ImplementationFactory\DependencyInjection.ImplementationFactory.csproj" />
     <ProjectReference Include="..\DependencyInjection.Settings\DependencyInjection.Settings.csproj" />
+    <ProjectReference Include="..\DependencyInjections.AssemblyExtensions\DependencyInjection.AssemblyExtensions.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
