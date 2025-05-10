@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>1.0.0.1</Version>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
     <Title>Extensions for loading services from assemblies</Title>
@@ -17,6 +19,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DependencyInjection.ImplementationFactory\DependencyInjection.ImplementationFactory.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutDir)*.dll" Pack="true" PackagePath="dependencies"></None>
   </ItemGroup>
 
 

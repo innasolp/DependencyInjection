@@ -6,27 +6,26 @@ public static class TypeExtensions
 {
     private static IEnumerable<Assembly> GetAllAssembliesFromPath(string path)
     {
-        if (!Directory.Exists(path))
-            throw new DirectoryNotFoundException(path);
-
-        var assembliesDir = Directory.GetDirectories(path);
-
-        List<Assembly> assemblies = [];
-
-        if (assembliesDir.Length != 0)
-            assemblies = assembliesDir.SelectMany(d => Directory.GetFiles(d, "*.dll")).Select(Assembly.LoadFrom).ToList();
-
-        assemblies.AddRange(Directory.GetFiles(path, "*.dll").Select(Assembly.LoadFrom).ToList());
+        var allFiles = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
+        
+        var assemblies = allFiles.Select(Assembly.LoadFrom).ToList();        
 
         return assemblies;
     }
 
-    public static Dictionary<Assembly, Type[]> GetAssemblyImplmentationsForInterface(this Type interfaceType, string path)
+    public static Dictionary<Assembly, Type[]> GetAssemblyImplementationsForInterface(this Type interfaceType, string path)
     {
         var assemblies = GetAllAssembliesFromPath(path);
 
         return assemblies.Select(a => new { assembly = a, types = a.GetTypes().Where(t => t.IsImplementation(interfaceType)) })
              .ToDictionary(at => at.assembly, at => at.types.ToArray());
+    }
+
+    public static Type[] GetImplementationsForInterface(this Type interfaceType, string path)
+    {
+        var assemblies = GetAllAssembliesFromPath(path);
+
+        return assemblies.SelectMany(a => a.GetTypes().Where(t => t.IsImplementation(interfaceType))).Distinct().ToArray();
     }
 
     public static Type? GetServiceTypeFromAssembly(this string path, string serviceTypeName)

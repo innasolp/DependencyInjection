@@ -24,7 +24,7 @@ public abstract class WorkerBuilder(IServiceCollection services)
             implementationType = types?.FirstOrDefault();
         else
         {
-            var implementations = serviceType.GetAssemblyImplmentationsForInterface(path).SelectMany(at => at.Value).ToArray();
+            var implementations = serviceType.GetAssemblyImplementationsForInterface(path).SelectMany(at => at.Value).ToArray();
             if (implementations.Length != 0)
                 PathInterfaceTypes.Add(key, implementations);
             implementationType = implementations.FirstOrDefault();
