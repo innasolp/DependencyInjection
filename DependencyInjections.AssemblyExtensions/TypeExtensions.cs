@@ -6,9 +6,15 @@ public static class TypeExtensions
 {
     private static IEnumerable<Assembly> GetAllAssembliesFromPath(string path)
     {
-        var allFiles = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
+        var allFiles = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories).ToArray();
         
-        var assemblies = allFiles.Select(Assembly.LoadFrom).ToList();        
+        var assemblies = new List<Assembly>();
+        foreach (var file in allFiles)
+        {
+            var assembly = Assembly.LoadFrom(file);
+            if(!assemblies.Contains(assembly))
+                assemblies.Add(assembly);
+        }  
 
         return assemblies;
     }
