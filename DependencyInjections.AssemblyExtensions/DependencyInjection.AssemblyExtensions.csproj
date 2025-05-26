@@ -11,7 +11,7 @@
     <Title>Extensions for loading services from assemblies</Title>
     <RepositoryUrl>https://github.com/innasolp/DependencyInjection</RepositoryUrl>
     <PackageVersion>$(Version)</PackageVersion>
-    <Configurations>Debug;Release;</Configurations>
+    <Configurations>Debug;Release;debug libs</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
