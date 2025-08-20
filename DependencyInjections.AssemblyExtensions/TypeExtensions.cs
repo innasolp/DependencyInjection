@@ -11,9 +11,16 @@ public static class TypeExtensions
         var assemblies = new List<Assembly>();
         foreach (var file in allFiles)
         {
-            var assembly = Assembly.LoadFrom(file);
-            if(!assemblies.Contains(assembly))
-                assemblies.Add(assembly);
+            try
+            {
+                var assembly = Assembly.LoadFrom(file);
+                if (!assemblies.Contains(assembly))
+                    assemblies.Add(assembly);
+            }
+            catch(BadImageFormatException)
+            {
+                continue;
+            }
         }  
 
         return assemblies;
