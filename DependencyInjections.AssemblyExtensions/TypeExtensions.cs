@@ -21,6 +21,10 @@ public static class TypeExtensions
             {
                 continue;
             }
+            catch(FileLoadException)
+            {
+                continue;
+            }
         }  
 
         return assemblies;
