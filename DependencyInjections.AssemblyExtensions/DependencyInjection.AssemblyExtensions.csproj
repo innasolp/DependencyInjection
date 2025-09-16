@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.0.4</Version>
+    <Version>1.0.0.5</Version>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
@@ -14,9 +14,9 @@
     <Configurations>Debug;Release;debug libs</Configurations>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DependencyInjection.ImplementationFactory\DependencyInjection.ImplementationFactory.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+	</ItemGroup>
 
   <ItemGroup>
     <None Include="$(OutDir)*.dll" Pack="true" PackagePath="dependencies"></None>
