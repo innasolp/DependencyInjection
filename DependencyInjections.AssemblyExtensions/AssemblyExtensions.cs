@@ -1,5 +1,4 @@
-﻿using DependencyInjection.ImplementationFactory;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace DependencyInjection.AssemblyExtensions;
 
@@ -12,17 +11,5 @@ public static class AssemblyExtensions
             services.AddSingleton(serviceType, implementationType);
 
         return services;
-    }
-
-    public static IServiceCollection AddServiceImplementationFactoriesFromPath(this IServiceCollection services, Type serviceType, string path)
-    {
-        var implementationFactories = typeof(IServiceImplementationFactory).GetImplementationsForInterface(path).
-            Where(t => t.IsGenericType &&
-                (t.GenericTypeArguments.Contains(serviceType) || t.GenericTypeArguments.Any(g => g.GetInterfaces().Contains(serviceType))));
-        
-        foreach (var implementationFactory in implementationFactories)
-            services.AddServiceImplementationSingleton(serviceType, implementationFactory);
-
-        return services;
-    }
+    }    
 }

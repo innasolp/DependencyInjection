@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Nodes;
-
-namespace DependencyInjection.Interfaces;
+﻿namespace DependencyInjection.WorkerBuilder;
 
 public interface IServiceSettings
 {

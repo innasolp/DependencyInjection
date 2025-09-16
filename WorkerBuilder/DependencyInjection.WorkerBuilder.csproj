@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Configurations>Debug;Release;debug libs</Configurations>
-    <Version>1.0.0.3</Version>
+    <Version>1.0.0.4</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
     <Title>Build dependencies by settings</Title>
@@ -16,12 +16,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DependencyInjection.ImplementationFactory\DependencyInjection.ImplementationFactory.csproj" />
-    <ProjectReference Include="..\DependencyInjection.Settings\DependencyInjection.Settings.csproj" />
-    <ProjectReference Include="..\DependencyInjections.AssemblyExtensions\DependencyInjection.AssemblyExtensions.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

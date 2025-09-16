@@ -74,5 +74,4 @@ public static class TypeExtensions
     {
         return type.IsClass && !type.IsAbstract && type.GetInterfaces().Contains(interfaceType);
     }
-
 }
