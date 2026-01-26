@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.InterceptionExtensions", "DependencyInjection.InterceptionExtensions\DependencyInjection.InterceptionExtensions.csproj", "{4BD711BC-9D8B-415F-9C2F-155533F94FD0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.ImplementationFactory", "DependencyInjection.ImplementationFactory\DependencyInjection.ImplementationFactory.csproj", "{152DA277-8994-4E80-8B0C-B230C30DDB07}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.WorkerBuilder", "WorkerBuilder\DependencyInjection.WorkerBuilder.csproj", "{E01AF03E-F709-43F0-95E1-F1B9B06D350E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
@@ -32,10 +30,6 @@ Global
 		{152DA277-8994-4E80-8B0C-B230C30DDB07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{152DA277-8994-4E80-8B0C-B230C30DDB07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{152DA277-8994-4E80-8B0C-B230C30DDB07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E01AF03E-F709-43F0-95E1-F1B9B06D350E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E01AF03E-F709-43F0-95E1-F1B9B06D350E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E01AF03E-F709-43F0-95E1-F1B9B06D350E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E01AF03E-F709-43F0-95E1-F1B9B06D350E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0053CB5-2E11-43B4-AC78-1CAB4B62CAD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B0053CB5-2E11-43B4-AC78-1CAB4B62CAD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0053CB5-2E11-43B4-AC78-1CAB4B62CAD5}.Release|Any CPU.ActiveCfg = Release|Any CPU

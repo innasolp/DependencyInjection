@@ -10,7 +10,8 @@
     <Title>Dependency injection interception extensions</Title>
     <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
     <PackageId>$(AssemblyName)</PackageId>
-    <Version>$(VersionPrefix)</Version>
+	<Version>1.0.0.1</Version>
+	<PackageVersion>$(Version)</PackageVersion>
     <Authors>innasolp</Authors>
     <RepositoryUrl>https://github.com/innasolp/DependencyInjection</RepositoryUrl>
   </PropertyGroup>
