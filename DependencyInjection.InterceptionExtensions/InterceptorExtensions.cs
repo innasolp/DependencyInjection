@@ -44,6 +44,8 @@ public static class InterceptorExtensions
 
     public static IServiceCollection Intercept(this IServiceCollection services, Type serviceType, object instance)
     {
+        ArgumentNullException.ThrowIfNull(instance);
+
         if(!serviceType.IsAssignableFrom(instance.GetType()))
             throw new ArgumentException($"{serviceType.Name} is not assignable from {instance.GetType().Name}.");
 
@@ -84,9 +86,14 @@ public static class InterceptorExtensions
                     serviceType,
                     provider =>
                     {
-                        var initialInstance = ActivatorUtilities.CreateInstance(
+                        var initialInstance = service.ImplementationType != null
+                        ? ActivatorUtilities.CreateInstance(
                             provider,
-                            service.ImplementationType);
+                            service.ImplementationType)
+                         : service.ImplementationInstance != null ? ActivatorUtilities.CreateInstance(
+                            provider,
+                            service.ImplementationInstance.GetType())
+                         : throw new ArgumentException($"no any implementations for service {service.GetType().Name}");
                         return interceptInstance(initialInstance);
                     },
                     service.Lifetime);
