@@ -44,6 +44,9 @@ public static class InterceptorExtensions
 
     public static IServiceCollection Intercept(this IServiceCollection services, Type serviceType, object instance)
     {
+        if(!serviceType.IsAssignableFrom(instance.GetType()))
+            throw new ArgumentException($"{serviceType.Name} is not assignable from {instance.GetType().Name}.");
+
         var targetServices = services.Where(s => s.ServiceType == serviceType).ToList();
 
         if (targetServices.Count == 0)
