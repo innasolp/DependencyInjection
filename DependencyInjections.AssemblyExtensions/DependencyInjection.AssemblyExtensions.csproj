@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.0.5</Version>
+    <Version>1.0.0.6</Version>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
@@ -21,10 +21,6 @@
   <ItemGroup>
     <None Include="$(OutDir)*.dll" Pack="true" PackagePath="dependencies"></None>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set diLibDir=$(ProjectDir)\..\..\Libs\DependencyInjection\AssemblyExtensions&#xD;&#xA;set currentDiLibDir=$(SolutionDir)\Libs\DependencyInjection\AssemblyExtensions&#xD;&#xA;if not exist %25diLibDir%25 mkdir %25diLibDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25diLibDir%25&quot;&#xD;&#xA;if not exist %25currentDiLibDir%25 mkdir %25currentDiLibDir%25&#xD;&#xA;xcopy /E /Y &quot;$(TargetDir)&quot; &quot;%25currentDiLibDir%25&quot;" />
-  </Target>
 
 
 </Project>
