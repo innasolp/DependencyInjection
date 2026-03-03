@@ -19,7 +19,7 @@ public static class DIAssemblyExtensions
 
         foreach (var assembly in assemblies)
         {
-            var registrations = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Length > 0)
+            var registrations = assembly.GetLoadableTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Length > 0)
             .Select(t => new
             {
                 Implementation = t,
@@ -30,7 +30,7 @@ public static class DIAssemblyExtensions
             {
                 foreach (var service in reg.Services)
                 {
-                    services.AddSingleton(service, reg.Implementation);
+                    services.AddScoped(service, reg.Implementation);
                 }
             }
         }

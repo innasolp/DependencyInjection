@@ -6,6 +6,9 @@ public static class AssemblyHelper
 {
     public static IEnumerable<Assembly> GetAllAssembliesFromPath(string path)
     {
+        if (!Path.Exists(path))
+            throw new DirectoryNotFoundException($"Path {path} not found.");
+
         var allFiles = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories).ToArray();
 
         var assemblies = new List<Assembly>();
@@ -28,5 +31,17 @@ public static class AssemblyHelper
         }
 
         return assemblies;
+    }
+
+    public static Type[] GetLoadableTypes(this Assembly assembly)
+    {
+        try
+        {
+            return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            return  [.. ex.Types.Where(t => t != null)];
+        }
     }
 }
