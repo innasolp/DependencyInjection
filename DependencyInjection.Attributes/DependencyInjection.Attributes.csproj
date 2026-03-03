@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <Version>1.0.0.0</Version>
+	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <PackageOutputPath>$(SolutionDir)\packages</PackageOutputPath>
+	  <Title>Attributes for DI</Title>
+	  <RepositoryUrl>https://github.com/innasolp/DependencyInjection</RepositoryUrl>
+	  <PackageVersion>$(Version)</PackageVersion>
+	  <Configurations>Debug;Release;debug libs</Configurations>
+  </PropertyGroup>
+
+</Project>

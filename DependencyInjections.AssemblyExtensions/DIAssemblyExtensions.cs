@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DependencyInjection.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DependencyInjection.AssemblyExtensions;
 
@@ -11,19 +12,20 @@ public static class DIAssemblyExtensions
             services.AddSingleton(serviceType, implementationType);
 
         return services;
-    } 
-    
-    public static IServiceCollection RegisterAllServiceImplementationFromPath(this IServiceCollection services, string path)
+    }
+
+    private static IServiceCollection RegisterServiceImplementationsFromPath(this IServiceCollection services, string path, Func<Type, bool> typeFilter,
+        Func<Type, bool> interfaceFilter)
     {
         var assemblies = AssemblyHelper.GetAllAssembliesFromPath(path);
 
         foreach (var assembly in assemblies)
         {
-            var registrations = assembly.GetLoadableTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Length > 0)
+            var registrations = assembly.GetLoadableTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Length > 0 && typeFilter(t))
             .Select(t => new
             {
                 Implementation = t,
-                Services = t.GetInterfaces()
+                Services = t.GetInterfaces().Where(i=>interfaceFilter(i))
             });
 
             foreach (var reg in registrations)
@@ -36,5 +38,22 @@ public static class DIAssemblyExtensions
         }
 
         return services;
+    }
+
+    public static IServiceCollection RegisterAllServiceImplementationsFromPath(this IServiceCollection services, string path)
+    {
+        return services.RegisterServiceImplementationsFromPath(path, (t) => true, t=>true);
+    }
+
+    public static IServiceCollection RegisterServiceImplementationsFromPathInsteadDIIgnore(this IServiceCollection services, string path)
+    {
+        return services.RegisterServiceImplementationsFromPath(path, 
+            t => t.IsDefined(typeof(DIIgnoreAttribute), false),
+            t=> t.IsDefined(typeof(DIIgnoreAttribute), false));
+    }
+
+    public static IServiceCollection RegisterServiceImplementationsFromPathDILoad(this IServiceCollection services, string path)
+    {
+        return services.RegisterServiceImplementationsFromPath(path, (t) => t.IsDefined(typeof(DILoadAttribute), false), t=>true);
     }
 }
