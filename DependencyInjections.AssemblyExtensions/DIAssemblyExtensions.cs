@@ -14,7 +14,8 @@ public static class DIAssemblyExtensions
         return services;
     }
 
-    private static IServiceCollection RegisterServiceImplementationsFromPath(this IServiceCollection services, string path, Func<Type, bool> typeFilter)
+    private static IServiceCollection RegisterServiceImplementationsFromPath(this IServiceCollection services, string path, Func<Type, bool> typeFilter,
+        Func<Type, bool> interfaceFilter)
     {
         var assemblies = AssemblyHelper.GetAllAssembliesFromPath(path);
 
@@ -24,7 +25,7 @@ public static class DIAssemblyExtensions
             .Select(t => new
             {
                 Implementation = t,
-                Services = t.GetInterfaces()
+                Services = t.GetInterfaces().Where(i=>interfaceFilter(i))
             });
 
             foreach (var reg in registrations)
@@ -41,16 +42,18 @@ public static class DIAssemblyExtensions
 
     public static IServiceCollection RegisterAllServiceImplementationsFromPath(this IServiceCollection services, string path)
     {
-        return services.RegisterServiceImplementationsFromPath(path, (t) => true);
+        return services.RegisterServiceImplementationsFromPath(path, (t) => true, t=>true);
     }
 
     public static IServiceCollection RegisterServiceImplementationsFromPathInsteadDIIgnore(this IServiceCollection services, string path)
     {
-        return services.RegisterServiceImplementationsFromPath(path, (t) => t.GetCustomAttributes(typeof(DIIgnoreAttribute), false).Length == 0);
+        return services.RegisterServiceImplementationsFromPath(path, 
+            t => t.IsDefined(typeof(DIIgnoreAttribute), false),
+            t=> t.IsDefined(typeof(DIIgnoreAttribute), false));
     }
 
     public static IServiceCollection RegisterServiceImplementationsFromPathDILoad(this IServiceCollection services, string path)
     {
-        return services.RegisterServiceImplementationsFromPath(path, (t) => t.GetCustomAttributes(typeof(DILoadAttribute), false).Length > 0);
+        return services.RegisterServiceImplementationsFromPath(path, (t) => t.IsDefined(typeof(DILoadAttribute), false), t=>true);
     }
 }
