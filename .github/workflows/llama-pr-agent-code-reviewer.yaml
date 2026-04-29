@@ -1,0 +1,35 @@
+name: Llama Pr-agent code reviewer (via Tailscale)
+
+on:
+  workflow_dispatch: 
+    inputs:
+      pr_number:
+        description: 'Input pull request number'
+        required: true
+        type: string
+      model_name:
+        description: 'Select Ollama model'
+        required: true
+        default: 'qwen2.5-coder:14b'
+        type: choice
+        options:
+          - 'qwen2.5-coder:14b'
+          - 'qwen2.5-coder:7b' 
+          - 'qwen2.5-coder:3b'  
+      language:
+        description: 'Select response language'
+        required: true
+        default: 'English'
+        type: choice
+        options:
+          - 'English'
+          - 'Russian'
+
+jobs:
+  ai-review:      
+     uses : innasolp/GithubActions/.github/workflows/ai-review-pr-agent-llama_test.yaml@3-add-multiple-action-pushing-to-all-repositories
+     with:
+       pr_number: ${{ inputs.pr_number }}
+       model_name: ${{ inputs.model_name }}
+       language: ${{ inputs.language }}
+     secrets: inherit # Важно, если нужны токены или ключи Tailscale   
