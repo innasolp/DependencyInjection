@@ -1,0 +1,57 @@
+name: Pr-agent code reviewer (via Tailscale)
+
+on:
+  workflow_dispatch: 
+    inputs:
+      pr_number:
+        description: 'Input pull request number'
+        required: true
+        type: string
+      api:
+        description: 'Select api'
+        required: true
+        default: 'Llama'
+        type: choice
+        options:
+          - 'Llama'
+          - 'OpenRouter' 
+          - 'Ollama'  
+      model_name:
+        description: 'Select model'
+        required: true
+        default: 'qwen2.5-coder:14b'
+        type: choice
+        options:
+          - 'qwen2.5-coder:14b'
+          - 'qwen2.5-coder:7b' 
+          - 'qwen2.5-coder:3b'  
+      language:
+        description: 'Select response language'
+        required: true
+        default: 'English'
+        type: choice
+        options:
+          - 'English'
+          - 'Russian'
+
+jobs: 
+          
+  ai-review-openai:      
+     if: ${{ inputs.api != 'Ollama'}} 
+     uses : innasolp/GithubActions/.github/workflows/ai-review-pr-agent-openai.yaml@main
+     with:
+       pr_number: ${{ inputs.pr_number }}
+       model_name: ${{ inputs.model_name }}
+       language: ${{ inputs.language }}
+       api: ${{ inputs.api }}
+     secrets: inherit 
+     
+  ai-review-ollama:      
+      if: ${{ inputs.api == 'Ollama'}} 
+      uses : innasolp/GithubActions/.github/workflows/ai-review-pr-agent-ollama.yaml@main
+      with:
+        pr_number: ${{ inputs.pr_number }}
+        model_name: ${{ inputs.model_name }}
+        language: ${{ inputs.language }}
+      secrets: inherit   
+     
