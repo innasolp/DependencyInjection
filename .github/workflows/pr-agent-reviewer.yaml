@@ -34,7 +34,19 @@ on:
           - 'English'
           - 'Russian'
 
-jobs: 
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      api_url: ${{ steps.logic.outputs.api_url }}
+    steps:
+      - id: logic
+        run: |
+          if [[ "${{ inputs.api }}" == "Llama" ]]; then
+            echo "model=${{ secrets.LLAMA_ENDPOINT }}" >> $GITHUB_OUTPUT
+          else if [[ "${{ inputs.api }}" == "OpenRouter" ]]; then
+            echo "model=${{ inputs.OPENROUTER_ENDPOINT }}" >> $GITHUB_OUTPUT
+          fi
           
   ai-review-openai:      
      if: ${{ inputs.api != 'Ollama'}} 
