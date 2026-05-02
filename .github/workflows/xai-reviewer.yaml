@@ -1,0 +1,51 @@
+name: X AI Code Review by nikita filonov (via Tailscale)
+
+on:
+  workflow_dispatch: 
+    inputs:
+      pr_number:
+        description: 'Input pull request number'
+        required: true
+        type: string
+      provider:
+        description: 'Select provider'
+        required: true
+        default: 'LLAMA'
+        type: choice
+        options:
+          - 'LLAMA'
+          - 'OPENROUTER' 
+          - 'OLLAMA'  
+      model_name:
+        description: 'Select model'
+        required: true
+        default: 'qwen2.5-coder:14b'
+        type: choice
+        options:
+          - 'qwen2.5-coder:14b'
+          - 'qwen2.5-coder:7b' 
+          - 'qwen2.5-coder:3b'  
+      review-command:
+        type: choice
+        default: run
+        options:
+          - run
+          - run-inline
+          - run-context
+          - run-summary
+          - run-inline-reply
+          - run-summary-reply
+          - clear-inline
+          - clear-summary
+
+jobs:  
+          
+  ai-review-openai:   
+     uses : innasolp/GithubActions/.github/workflows/nikita-filonov-ai-review.yaml@main
+     with:
+       pr_number: ${{ inputs.pr_number }}
+       model_name: ${{ inputs.model_name }}
+       provider: ${{ inputs.provider }}
+       review_command: ${{ inputs.review-command }}
+     secrets: inherit 
+     
