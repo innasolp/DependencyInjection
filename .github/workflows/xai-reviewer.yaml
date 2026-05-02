@@ -27,7 +27,8 @@ on:
           - 'qwen2.5-coder:3b'  
       review-command:
         type: choice
-        default: run
+        default: 'run'
+        required: true
         options:
           - run
           - run-inline
@@ -43,9 +44,9 @@ jobs:
   ai-review-openai:   
      uses : innasolp/GithubActions/.github/workflows/nikita-filonov-ai-review.yaml@main
      with:
-       pr_number: ${{ inputs.pr_number }}
+       pull-request-number: ${{ inputs.pr_number }}
        model_name: ${{ inputs.model_name }}
        provider: ${{ inputs.provider }}
-       review_command: ${{ inputs.review-command }}
+       review-command: ${{ inputs.review-command }}
      secrets: inherit 
      
