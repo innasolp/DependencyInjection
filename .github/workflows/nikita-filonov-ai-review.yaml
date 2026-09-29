@@ -1,0 +1,155 @@
+name: X AI Review by nikita filonov
+
+on:
+  workflow_call:
+    inputs:
+      agent-mode:
+        type: boolean
+        default: true
+      rg_enabled:
+        description: 'ripgrep for AI-gent when agent mode enabled'
+        type: boolean
+        default: true  
+      review-command:
+        type: string
+        default: 'run'
+      pull-request-number:
+        type: string
+        required: true
+      provider:
+        description: 'Input provider'
+        required: true
+        type: string
+        default: 'LLAMA'
+      model_name:
+        description: 'Select model'
+        required: true
+        default: 'qwen2.5-coder:14b'
+        type: string    
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Prepare API
+        id: get_api_step
+        run: |
+          if [ "${{ inputs.provider }}" = "OPENROUTER" ]; then 
+            val="${{ secrets.OPENROUTER_ENDPOINT }}"
+            llm='OPENAI'
+            # --todo
+            token="${{ secrets.OPENROUTER_API_TOKEN }}"
+          elif [ "${{ inputs.provider }}" = "PGSGROVE" ]; then 
+            val="${{ secrets.PGSGROVE_ENDPOINT }}"
+            llm='OPENAI'
+            # --todo
+            token="${{ secrets.PGSGROVE_API_TOKEN }}"  
+          elif [ "${{ inputs.provider }}" = "GPTUNNEL" ]; then 
+            val="${{ secrets.GPTUNNEL_ENDPOINT }}"
+            llm='OPENAI'
+            # --todo
+            token="${{ secrets.GPTUNNEL_API_TOKEN }}"  
+          elif [ "${{ inputs.provider }}" = "AITUNNEL" ]; then 
+            val="${{ secrets.AITUNNEL_ENDPOINT }}"
+            llm='OPENAI'
+            # --todo
+            token="${{ secrets.AITUNNEL_API_TOKEN }}"  
+          elif [ "${{ inputs.provider }}" = "LLAMA" ]; then
+            val="${{ secrets.LLAMA_ENDPOINT }}"
+            # val="http://100.89.249.118:11434"
+            llm='OPENAI'
+            token="not-needed-for-local"
+            gh workflow run llama-check-model.yaml \
+              --repo innasolp/GithubActions \
+              --ref main \
+              -f model_name="${{ inputs.model_name }}"
+            
+          elif [ "${{ inputs.provider }}" = "OLLAMA" ]; then
+            val="${{ secrets.LLAMA_ENDPOINT }}"
+            llm='OLLAMA'
+            token="not-needed-for-local"
+            gh workflow run ollama-check-model.yaml \
+              --repo innasolp/GithubActions \
+              --ref main \
+              -f model_name="${{ inputs.model_name }}"
+          fi
+          
+          echo "api_url=$val" >> $GITHUB_OUTPUT
+          echo "llm_provider=$llm" >> $GITHUB_OUTPUT
+          echo "api_token=$token" >> $GITHUB_OUTPUT
+          
+          echo "Selected API: $val"
+          echo "Provider: $llm"
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACTION_TOKEN }}      
+
+      - name: Connect to Tailscale
+        if: inputs.provider == 'LLAMA' || inputs.provider == 'OLLAMA'
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci     
+
+      - name: Install ripgrep
+        if: ${{ inputs.rg_enabled == true }}
+        run: |
+          echo "Installing ripgrep as requested by inputs.rg..."
+          sudo apt-get update && sudo apt-get install -y ripgrep    
+
+      - name: Setup Dynamic Environment
+        run: |
+          if [ "${{ github.event.inputs.review-command }}" = "summary" ]; then
+            echo 'REVIEW__MODES=["summary"]' >> $GITHUB_ENV
+            
+            # Многострочная запись промпта в GITHUB_ENV
+            echo "REVIEW__PROMPTS__SUMMARY<<EOF" >> $GITHUB_ENV
+            echo " You are an elite code reviewer. Review the following changes from a massive pull request.
+                  Provide a high-level, concise executive summary of what was changed across the files.
+                  Use bullet points. Do not review line-by-line. Focus only on architectural or logic changes."
+            echo "EOF" >> $GITHUB_ENV
+          else
+            # Для других режимов включаем стандартное поведение и не передаем PROMPTS__SUMMARY вообще
+            echo 'REVIEW__MODES=["inline", "summary"]' >> $GITHUB_ENV
+          fi    
+
+      - uses: Nikita-Filonov/ai-review@main
+        env:
+          # --- LLM configuration ---
+          LLM__PROVIDER: ${{ steps.get_api_step.outputs.llm_provider }}
+          LLM__META__MODEL: ${{ inputs.model_name }}
+          LLM__META__MAX_TOKENS: "16384"
+          LLM__META__TEMPERATURE: "0.0"
+          LLM__HTTP_CLIENT__API_URL: ${{ steps.get_api_step.outputs.api_url }}
+          LLM__HTTP_CLIENT__TIMEOUT: 4800
+          LLM__HTTP_CLIENT__API_TOKEN: ${{ steps.get_api_step.outputs.api_token }}
+          LLM__HTTP_CLIENT__STREAM: "true"
+          
+          # --- GitHub integration ---
+          VCS__PROVIDER: "GITHUB"
+          VCS__PIPELINE__OWNER: ${{ github.repository_owner }}
+          VCS__PIPELINE__REPO: ${{ github.event.repository.name }}
+          VCS__PIPELINE__PULL_NUMBER: ${{ inputs.pull-request-number }}
+          VCS__HTTP_CLIENT__API_URL: "https://api.github.com"
+          VCS__HTTP_CLIENT__API_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
+          VCS__PAGINATION__PER_PAGE: "30"
+          VCS__PAGINATION__MAX_PAGES: "5"
+
+          AGENT__ENABLED: ${{ inputs.agent-mode }}
+          AGENT__MAX_ITERATIONS: "25"
+          AGENT__COMMAND_TIMEOUT: "10"
+          AGENT__MAX_TOTAL_CONTEXT_CHARS: "40000"
+          AGENT__MAX_COMMAND_OUTPUT_CHARS: "40000"
+
+          # --- Защита от OOM ---
+          PROMPT__INCLUDE_SUMMARY_SYSTEM_PROMPTS: "false"
+          PROMPT__INCLUDE_SUMMARY_REPLY_SYSTEM_PROMPTS: "false"
+          REVIEW__SUMMARY_TAG: ""
+          REVIEW__SUMMARY_REPLY_TAG: ""
+          REVIEW__CONTEXT_LINES: "3"
+
+        with:
+          review-command: ${{ inputs.review-command }}
