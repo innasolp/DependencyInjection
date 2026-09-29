@@ -3,6 +3,13 @@ name: X AI Code Review by nikita filonov (via Tailscale)
 on:
   workflow_dispatch: 
     inputs:
+      agent_mode:
+        type: boolean
+        default: true
+      rg_enabled:
+        description: 'ripgrep for AI-gent when agent mode enabled'
+        type: boolean
+        default: true    
       pr_number:
         description: 'Input pull request number'
         required: true
@@ -15,7 +22,10 @@ on:
         options:
           - 'LLAMA'
           - 'OPENROUTER' 
-          - 'OLLAMA'  
+          - 'OLLAMA' 
+          - 'PGSGROVE'
+          - 'GPTUNNEL'
+          - 'AITUNNEL'
       model_name:
         description: 'Select model'
         required: true
@@ -24,7 +34,9 @@ on:
         options:
           - 'qwen2.5-coder:14b'
           - 'qwen2.5-coder:7b' 
-          - 'qwen2.5-coder:3b'  
+          - 'qwen2.5-coder:3b' 
+          - 'qwen/qwen3.8-27b:free'
+          - 'deepseek-v4-pro'
       review-command:
         type: choice
         default: 'run'
@@ -44,6 +56,8 @@ jobs:
   ai-review-openai:   
      uses : innasolp/GithubActions/.github/workflows/nikita-filonov-ai-review.yaml@main
      with:
+       agent-mode: ${{ inputs.agent_mode }}
+       rg_enabled: ${{ inputs.rg_enabled }}
        pull-request-number: ${{ inputs.pr_number }}
        model_name: ${{ inputs.model_name }}
        provider: ${{ inputs.provider }}
