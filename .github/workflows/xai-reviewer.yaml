@@ -29,14 +29,16 @@ on:
       model_name:
         description: 'Select model'
         required: true
-        default: 'qwen2.5-coder:14b'
+        default: 'qwen2.5-coder:7b'
         type: choice
         options:
-          - 'qwen2.5-coder:14b'
           - 'qwen2.5-coder:7b' 
-          - 'qwen2.5-coder:3b' 
+          - 'qwen2.5-coder:14b'
+          - 'qwen2.5-coder:3b'
           - 'qwen/qwen3.8-27b:free'
           - 'deepseek-v4-pro'
+          - 'deepseek-v4-pro-0813'
+          - 'deepseek-v4.1-flash'
       review-command:
         type: choice
         default: 'run'
@@ -50,6 +52,14 @@ on:
           - run-summary-reply
           - clear-inline
           - clear-summary
+      per_page:
+        type: string
+        required: true 
+        default: '30'
+      max_pages:
+        type: string
+        required: true 
+        default: '5'     
 
 jobs:  
           
@@ -62,5 +72,7 @@ jobs:
        model_name: ${{ inputs.model_name }}
        provider: ${{ inputs.provider }}
        review-command: ${{ inputs.review-command }}
+       per_page: ${{ inputs.per_page }}
+       max_pages: ${{ inputs.max_pages }}
      secrets: inherit 
      
