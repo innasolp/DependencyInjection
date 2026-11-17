@@ -19,6 +19,7 @@ on:
           - 'PGSGROVE'
           - 'GPTUNNEL'
           - 'AITUNNEL'
+          - 'TEAMO'
       model_name:
         description: 'Select model'
         required: true
