@@ -20,6 +20,7 @@ on:
           - 'GPTUNNEL'
           - 'AITUNNEL'
           - 'TEAMO'
+          - 'GOOGLEAI'
       model_name:
         description: 'Select model'
         required: true
@@ -33,6 +34,10 @@ on:
           - 'deepseek-v4-pro'
           - 'deepseek-v4-pro-0813'
           - 'deepseek-v4.1-flash'
+          - 'gemini-4-hydrogen'
+          - 'gemma-4-31b-it'
+          - 'gemma-4-26b-a4b-it'
+          - 'gemini-3.8-flash'
       language:
         description: 'Select response language'
         required: true
